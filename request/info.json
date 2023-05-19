@@ -1,11 +1,11 @@
 {
     "author": [
-        "nickich_09"
+        "Neuro Assassin"
     ],
-    "install_msg": "Было переведено nickich_09",
-    "name": "request",
-    "short": "Создайте свои тикеты.",
-    "description": "Разрешает пользователям создавать тикет, нажимая на реакцию сообщения.",
+    "install_msg": "Thank you for downloading this cog.",
+    "name": "reacticket",
+    "short": "Create a reaction-based ticketing system.",
+    "description": "Allow users to create ticket channels by clicking on a set reaction on a set message.",
     "tags": [
         "tools",
         "utility"
