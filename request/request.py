@@ -208,11 +208,11 @@ class ReacTicket(
                 if reporting_channel:
                     if await self.embed_requested(reporting_channel):
                         embed = discord.Embed(
-                            title="Тикет был закрыт",
+                            title="Ticket Closed",
                             description=(
-                                f"Тикет {channel.mention} созданный "
-                                f"{str(member)} "
-                                f"будет удален из-за выхода игрока с сервера. "
+                                f"Ticket {channel.mention} created by "
+                                f"{member.mention} "
+                                f"has been closed due to the user leaving the guild."
                             ),
                             color=await self.bot.get_embed_color(reporting_channel),
                         )
@@ -228,9 +228,9 @@ class ReacTicket(
                         await reporting_channel.send(embed=embed)
                     else:
                         message = (
-                            f"Тикет {channel.mention} созданный "
+                            f"Ticket {channel.mention} created by "
                             f"{str(member)} "
-                            f"будет удален из-за выхода игрока с сервера. "
+                            f"has been closed due to the user leaving the guild."
                         )
                         if ticket["assigned"]:
                             moderator = getattr(
@@ -238,7 +238,7 @@ class ReacTicket(
                                     ticket["assigned"], "mention", "Unknown moderator"
                                 )
                             )
-                            message += f"\nНазначенный модератор: {moderator}"
+                            message += f"\nAssigned moderator: {moderator}"
                         await reporting_channel.send(
                             message, allowed_mentions=discord.AllowedMentions.none()
                         )
@@ -250,8 +250,8 @@ class ReacTicket(
                                 user, send_messages=False, read_messages=True
                             )
                 await channel.send(
-                    f"Тикет {channel.mention} игрока {member.display_name} был закрыт. "
-                    "Канал будет удален через 3 секунды."
+                    f"Ticket {channel.mention} for {member.display_name} has been closed "
+                    "due to author leaving.  Channel will be moved to archive in one minute."
                 )
 
                 post_processing[channel] = added_users
@@ -264,14 +264,14 @@ class ReacTicket(
                                     user, send_messages=False, read_messages=True
                                 )
                 await channel.send(
-                    f"Тикет {channel.mention} игрока {member.display_name} был закрыт. "
-                    "Канал будет удален через 3 секунды."
+                    f"Ticket {channel.mention} for {member.display_name} has been closed "
+                    "due to author leaving.  Channel will be deleted in one minute, if exists."
                 )
             async with self.config.guild(member.guild).created() as tickets:
                 if str(member.id) in tickets:
                     del tickets[str(member.id)]
 
-        await asyncio.sleep(3)
+        await asyncio.sleep(60)
 
         for channel, added_users in post_processing.items():
             if guild_settings["archive"]["enabled"] and channel and archive:
@@ -373,7 +373,7 @@ class ReacTicket(
             if guild_settings["maxticketsenddm"]:
                 try:
                     await user.send(
-                        f"Вы достигли максимального количества тикетов в {guild.name}."
+                        f"You have reached the maximum number of tickets in {guild.name}."
                     )
                 except discord.HTTPException:
                     pass
@@ -431,13 +431,13 @@ class ReacTicket(
         if guild_settings["openmessage"] == "{default}":
             if guild_settings["usercanclose"]:
                 sent = await created_channel.send(
-                    f"Тикет создан игроком {user.display_name}\Чтобы заркрыть тикет, "
-                    f"Администраторы или {user.display_name} должны ввести`.request close`."
+                    f"Ticket created for {user.display_name}\nTo close this, "
+                    f"Administrators or {user.display_name} may run `[p]reacticket close`."
                 )
             else:
                 sent = await created_channel.send(
-                    f"Тикет создан игроком {user.display_name}\n"
-                    "Только администраторы могут закрывать тикеты."
+                    f"Ticket created for {user.display_name}\n"
+                    "Only Administrators may close this by running `[p]reacticket close`."
                 )
         else:
             try:
@@ -455,13 +455,13 @@ class ReacTicket(
                 print(e)
                 if guild_settings["usercanclose"]:
                     sent = await created_channel.send(
-                        f"Тикет создан игроком {user.display_name}\Чтобы заркрыть тикет, "
-                        f"Администраторы или {user.display_name} должны ввести`.request close`."
+                        f"Ticket created for {user.display_name}\nTo close this, "
+                        f"Administrators or {user.display_name} may run `[p]reacticket close`."
                     )
                 else:
                     sent = await created_channel.send(
-                        f"Тикет создан игроком {user.display_name}\n"
-                        "Только администраторы могут закрывать тикеты."
+                        f"Ticket created for {user.display_name}\n"
+                        "Only Administrators may close this by running `[p]reacticket close`."
                     )
 
         # To prevent race conditions...
@@ -490,52 +490,52 @@ class ReacTicket(
             if reporting_channel:
                 if await self.embed_requested(reporting_channel):
                     embed = discord.Embed(
-                        title="Тикет был открыт",
+                        title="Ticket Opened",
                         description=(
-                            f"Заявка, созданная {user.mention} была открыта.\n"
-                            f"Нажми [сюда]({sent.jump_url}) чтобы переместиться в начало тикета."
+                            f"Ticket created by {user.mention} has been opened.\n"
+                            f"Click [here]({sent.jump_url}) to jump to the start of the ticket."
                         ),
                     )
                     description = ""
                     if guild_settings["usercanclose"]:
-                        description += "Игрокам **разрешено** закрыть их тикеты.\n"
+                        description += "Users are **allowed** to close their own tickets.\n"
                     else:
-                        description += "Игрокам **запрещено** закрыть их тикеты.\n"
+                        description += "Users are **not** allowed to close their own tickets.\n"
 
                     if guild_settings["usercanmodify"]:
                         description += (
-                            "Игрокам **разрешено** добавлять/удалять "
-                            "других игроков из их тикета.\n"
+                            "Users are **allowed** to add/remove "
+                            "other users to/from their tickets.\n"
                         )
                     else:
                         description += (
-                            "Игрокам **запрещено** добавлять/удалять "
-                            "других игроков из их тикета.\n"
+                            "Users are **not** allowed to add/remove "
+                            "other users to/from their tickets.\n"
                         )
                     embed.add_field(name="User Permission", value=description)
                     await reporting_channel.send(embed=embed)
                 else:
                     message = (
-                        f"Тикет, созданный {str(user)} был открыт.\n"
-                        f"Нажми [сюда]({sent.jump_url}) чтобы переместиться туда.\n"
+                        f"Ticket created by {str(user)} has been opened.\n"
+                        f"Here's a link ({sent.jump_url}) to jump to it.\n"
                     )
 
                     if guild_settings["usercanclose"] and guild_settings["usercanmodify"]:
                         message += (
-                            "Пользователям **разрешено** закрывать "
-                            "и добавлять/удалять других игроков из их тикета."
+                            "Users are **allowed** to close "
+                            "and add/remove users to/from their tickets."
                         )
                     elif guild_settings["usercanclose"]:
                         message += (
-                            "Игрокам **разрешено** закрывать свои тикеты, "
-                            "но нельзя добавлять/удалять других игроков."
+                            "Users are **allowed** to close their tickets, "
+                            "but cannot add/remove users."
                         )
                     elif guild_settings["usercanmodify"]:
                         message += (
-                            "Игрокам **разрешено** добавлять/удалять игроков в их тикет, "
-                            "но нельзя закрывать тикет."
+                            "Users are **allowed** to add/remove users to/from their tickets, "
+                            "but are **not** allowed to close."
                         )
                     else:
-                        message += "Игроки не могут закрывать и добавлять/удалять в свой тикет других игроков."
+                        message += "Users cannot close or add/remove users to/from their tickets."
 
                     await reporting_channel.send(message)
