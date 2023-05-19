@@ -1,0 +1,15 @@
+{
+    "author": [
+        "nickich_09"
+    ],
+    "install_msg": "Было переведено nickich_09",
+    "name": "request",
+    "short": "Создайте свои тикеты.",
+    "description": "Разрешает пользователям создавать тикет, нажимая на реакцию сообщения.",
+    "tags": [
+        "tools",
+        "utility"
+    ],
+    "requirements": [],
+    "hidden": false
+}
