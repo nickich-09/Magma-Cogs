@@ -35,11 +35,11 @@ import time
 from abc import ABC
 
 # ABC Mixins
-from reacticket.extensions.mixin import RTMixin
-from reacticket.extensions.base import ReacTicketBaseMixin
-from reacticket.extensions.basesettings import ReacTicketBaseSettingsMixin
-from reacticket.extensions.closesettings import ReacTicketCloseSettingsMixin
-from reacticket.extensions.usersettings import ReacTicketUserSettingsMixin
+from request.extensions.mixin import RTMixin
+from request.extensions.base import requestBaseMixin
+from request.extensions.basesettings import requestBaseSettingsMixin
+from request.extensions.closesettings import requestCloseSettingsMixin
+from request.extensions.usersettings import requestUserSettingsMixin
 
 
 class CompositeMetaClass(type(commands.Cog), type(ABC)):
@@ -47,11 +47,11 @@ class CompositeMetaClass(type(commands.Cog), type(ABC)):
     metaclass."""
 
 
-class ReacTicket(
-    ReacTicketBaseMixin,
-    ReacTicketBaseSettingsMixin,
-    ReacTicketCloseSettingsMixin,
-    ReacTicketUserSettingsMixin,
+class request(
+    requestBaseMixin,
+    requestBaseSettingsMixin,
+    requestCloseSettingsMixin,
+    requestUserSettingsMixin,
     RTMixin,
     commands.Cog,
     metaclass=CompositeMetaClass,
